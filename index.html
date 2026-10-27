@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ôn Tập Toán Lớp 6 - Trắc Nghiệm Tương Tác</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- KaTeX CSS and JS for Math Rendering -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Nunito', 'sans-serif'],
+                    },
+                    colors: {
+                        pastel: {
+                            green: '#E8F5E9',
+                            mint: '#A5D6A7',
+                            yellow: '#FFF9C4',
+                            blue: '#E3F2FD',
+                            sky: '#81D4FA',
+                            purple: '#F3E5F5',
+                            pink: '#FCE4EC'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #e0f2fe 0%, #e8f5e9 50%, #fef3c7 100%);
+            min-height: 100vh;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+        .option-btn {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .option-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #a5d6a7;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #81c784;
+        }
+    </style>
+</head>
+<body class="text-gray-800 pb-12">
+
+    <!-- Header & Navigation -->
+    <header class="sticky top-0 z-50 glass-card shadow-sm border-b border-green-100 mb-6">
+        <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-2xl bg-emerald-500 text-white flex items-center justify-center font-extrabold text-xl shadow-md">
+                    <i class="fa-solid fa-calculator"></i>
+                </div>
+                <div>
+                    <h1 class="font-black text-lg md:text-xl text-emerald-800 leading-tight">ÔN TẬP TOÁN LỚP 6</h1>
+                </div>
+            </div>
+
+            <!-- Audio & Timer Controls -->
+            <div class="flex items-center space-x-2 md:space-x-4">
+                <div id="timerDisplay" class="bg-amber-100 text-amber-800 font-bold px-3 py-1.5 rounded-full text-xs md:text-sm flex items-center gap-1.5 border border-amber-200">
+                    <i class="fa-regular fa-clock"></i>
+                    <span id="timeText">00:00</span>
+                </div>
+                <button id="bgMusicToggle" class="bg-emerald-100 hover:bg-emerald-200 text-emerald-700 px-3 py-1.5 rounded-full text-xs md:text-sm font-semibold flex items-center gap-1.5 transition">
+                    <i id="bgMusicIcon" class="fa-solid fa-music"></i>
+                    <span id="bgMusicText" class="hidden sm:inline">Nhạc Nền: Tắt</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-4xl mx-auto px-4">
+        
+        <!-- Progress Bar & Top Stats -->
+        <div class="glass-card rounded-2xl p-4 mb-6 shadow-sm">
+            <div class="flex justify-between items-center text-sm font-bold text-gray-600 mb-2">
+                <span>Tiến độ: <span id="currentQuestionNum" class="text-emerald-600 text-lg">1</span>/30 câu</span>
+                <span>Đã làm: <span id="answeredCount" class="text-blue-600">0</span> | Đúng: <span id="correctCount" class="text-emerald-600">0</span></span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-3 overflow-hidden p-0.5 border border-gray-100">
+                <div id="progressBar" class="bg-gradient-to-r from-emerald-400 to-teal-500 h-full rounded-full transition-all duration-300" style="width: 3.33%"></div>
+            </div>
+            
+            <!-- Quick Question Selector Grid -->
+            <div class="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between">
+                <button id="toggleGridBtn" class="text-xs font-bold text-emerald-600 hover:text-emerald-700 flex items-center gap-1">
+                    <i class="fa-solid fa-grip"></i> Danh sách câu hỏi
+                </button>
+                <div id="statusBadge" class="text-xs px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 font-semibold">
+                    Chưa trả lời
+                </div>
+            </div>
+
+            <!-- Question Jump Grid (Hidden by default) -->
+            <div id="questionGrid" class="hidden mt-3 grid grid-cols-6 sm:grid-cols-10 gap-1.5 pt-2 border-t border-dashed border-gray-200">
+                <!-- Javascript will populate 30 buttons here -->
+            </div>
+        </div>
+
+        <!-- Quiz Card Container -->
+        <div id="quizContainer" class="glass-card rounded-3xl p-6 md:p-8 shadow-lg relative min-h-[420px] flex flex-col justify-between">
+            <div>
+                <!-- Category Tag & Question Header -->
+                <div class="flex items-center justify-between mb-4">
+                    <span id="topicTag" class="text-xs font-extrabold px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 tracking-wide">
+                        CHỦ ĐỀ
+                    </span>
+                    <span id="questionDifficulty" class="text-xs font-semibold text-gray-400">Câu <span id="qNumHeader">1</span></span>
+                </div>
+
+                <!-- Question Text -->
+                <div id="questionText" class="text-base md:text-lg font-bold text-gray-800 leading-relaxed mb-6">
+                    Đang tải câu hỏi...
+                </div>
+
+                <!-- Options List -->
+                <div id="optionsContainer" class="space-y-3 mb-6">
+                    <!-- Dynamic Options -->
+                </div>
+            </div>
+
+            <!-- Explanation Box (Initially Hidden) -->
+            <div id="explanationContainer" class="hidden mt-4 p-5 rounded-2xl bg-amber-50/90 border border-amber-200 text-amber-900 shadow-inner">
+                <div class="flex items-center gap-2 font-black text-amber-800 text-base mb-2 border-b border-amber-200/60 pb-2">
+                    <i class="fa-solid fa-lightbulb text-amber-500 text-lg"></i>
+                    <span>GIẢI THÍCH CHI TIẾT</span>
+                </div>
+                <div id="explanationText" class="text-sm md:text-base leading-relaxed font-medium">
+                    <!-- Dynamic Math Solution -->
+                </div>
+            </div>
+
+            <!-- Navigation Bar inside Card -->
+            <div class="mt-8 pt-4 border-t border-gray-100 flex items-center justify-between gap-3">
+                <button id="prevBtn" class="px-5 py-2.5 rounded-xl border border-gray-300 font-bold text-gray-600 hover:bg-gray-100 transition flex items-center gap-2 text-sm disabled:opacity-40 disabled:cursor-not-allowed">
+                    <i class="fa-solid fa-arrow-left"></i> Câu Trước
+                </button>
+                <button id="submitAllBtn" class="px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-extrabold transition shadow-md text-sm hidden">
+                    <i class="fa-solid fa-paper-plane"></i> Nộp Bài
+                </button>
+                <button id="nextBtn" class="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold transition shadow-md flex items-center gap-2 text-sm">
+                    Câu Tiếp <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Final Score / Summary View (Hidden by Default) -->
+        <div id="summaryContainer" class="hidden glass-card rounded-3xl p-6 md:p-10 shadow-xl text-center">
+            <div id="badgeIcon" class="w-24 h-24 mx-auto mb-4 rounded-full bg-amber-100 text-amber-500 flex items-center justify-center text-5xl shadow-lg border-4 border-amber-200">
+                <i class="fa-solid fa-trophy"></i>
+            </div>
+            <h2 id="badgeTitle" class="text-2xl md:text-3xl font-black text-gray-800 mb-2">Xuất Sắc!</h2>
+            <p id="badgeSub" class="text-gray-600 mb-6 font-medium">Bạn đã hoàn thành xong bài ôn tập Toán 6!</p>
+
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
+                <div class="bg-emerald-50 border border-emerald-100 rounded-2xl p-4">
+                    <div class="text-xs text-emerald-600 font-bold uppercase">Điểm Số</div>
+                    <div id="finalScore" class="text-2xl md:text-3xl font-black text-emerald-700 mt-1">10 / 10</div>
+                </div>
+                <div class="bg-blue-50 border border-blue-100 rounded-2xl p-4">
+                    <div class="text-xs text-blue-600 font-bold uppercase">Số Câu Đúng</div>
+                    <div id="finalCorrect" class="text-2xl md:text-3xl font-black text-blue-700 mt-1">30/30</div>
+                </div>
+                <div class="bg-purple-50 border border-purple-100 rounded-2xl p-4">
+                    <div class="text-xs text-purple-600 font-bold uppercase">Tỉ Lệ Đúng</div>
+                    <div id="finalAccuracy" class="text-2xl md:text-3xl font-black text-purple-700 mt-1">100%</div>
+                </div>
+                <div class="bg-amber-50 border border-amber-100 rounded-2xl p-4">
+                    <div class="text-xs text-amber-600 font-bold uppercase">Thời Gian</div>
+                    <div id="finalTime" class="text-2xl md:text-3xl font-black text-amber-700 mt-1">05:20</div>
+                </div>
+            </div>
+
+            <div class="flex flex-wrap justify-center gap-4">
+                <button id="restartBtn" class="px-6 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold shadow-lg transition flex items-center gap-2">
+                    <i class="fa-solid fa-rotate-right"></i> Làm Lai Bài Ôn
+                </button>
+                <button id="reviewWrongBtn" class="px-6 py-3 rounded-2xl bg-amber-500 hover:bg-amber-600 text-white font-extrabold shadow-lg transition flex items-center gap-2">
+                    <i class="fa-solid fa-circle-xmark"></i> Xem Lại Câu Sai
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Web Audio & Logic Script -->
+    <script>
+        // ==========================================
+        // 1. DATA: 30 QUESTIONS WITH KATEX & EXPLANATIONS
+        // ==========================================
+        const questionsData = [
+            {
+                id: 1,
+                topic: "Tập hợp",
+                question: "Cho tập hợp $A = \\{1; 3; 5; 7\\}$. Khẳng định nào sau đây là **sai**?",
+                options: ["$1 \\in A$", "$3 \\in A$", "$6 \\notin A$", "$5 \\notin A$"],
+                correct: 3,
+                explanation: "Tập hợp $A$ gồm các phần tử $1, 3, 5, 7$. Vì $5$ là một phần tử thuộc tập hợp $A$ nên $5 \\in A$. Do đó khẳng định $5 \\notin A$ là **sai**."
+            },
+            {
+                id: 2,
+                topic: "Tập hợp",
+                question: "Cho tập hợp $M = \\{x \\in \\mathbb{N} \\mid 2 < x \\le 6\\}$. Viết tập hợp $M$ dưới dạng liệt kê các phần tử:",
+                options: ["$M = \\{2; 3; 4; 5; 6\\}$", "$M = \\{3; 4; 5; 6\\}$", "$M = \\{3; 4; 5\\}$", "$M = \\{2; 3; 4; 5\\}$"],
+                correct: 1,
+                explanation: "$x$ là số tự nhiên thỏa mãn $2 < x \\le 6$. Các số tự nhiên lớn hơn $2$ và nhỏ hơn hoặc bằng $6$ là $3; 4; 5; 6$. Vậy $M = \\{3; 4; 5; 6\\}$."
+            },
+            {
+                id: 3,
+                topic: "Ký hiệu Tập hợp",
+                question: "Khẳng định nào sau đây sử dụng **đúng** ký hiệu tập hợp?",
+                options: ["$5 \\subset \\{1; 3; 5\\}$", "$\\{5\\} \\in \\{1; 3; 5\\}$", "$5 \\in \\{1; 3; 5\\}$", "$\\{5\\} \\notin \\{1; 3; 5\\}$"],
+                correct: 2,
+                explanation: "$5$ là một phần tử, $\\{1; 3; 5\\}$ là một tập hợp. Để chỉ mối quan hệ giữa phần tử và tập hợp ta dùng ký hiệu thuộc $(\\in)$. Vì vậy $5 \\in \\{1; 3; 5\\}$ là viết đúng."
+            },
+            {
+                id: 4,
+                topic: "Tập hợp",
+                question: "Cho hai tập hợp $P = \\{x, y, z\\}$ và $Q = \\{y, z, t\\}$. Tập hợp gồm các phần tử vừa thuộc $P$ vừa thuộc $Q$ là:",
+                options: ["$\\{x, t\\}$", "$\\{y, z\\}$", "$\\{x, y, z, t\\}$", "$\\{x, z\\}$"],
+                correct: 1,
+                explanation: "Các phần tử xuất hiện trong cả hai tập hợp $P$ và $Q$ là $y$ và $z$. Do đó tập hợp cần tìm là $\\{y, z\\}$."
+            },
+            {
+                id: 5,
+                topic: "Cấu tạo số",
+                question: "Thêm chữ số $5$ vào đằng trước một số tự nhiên có ba chữ số thì số mới thay đổi như thế nào so với số cũ?",
+                options: ["Hơn số cũ $50$ đơn vị", "Hơn số cũ $500$ đơn vị", "Hơn số cũ $5000$ đơn vị", "Kém số cũ $5000$ đơn vị"],
+                correct: 2,
+                explanation: "Gọi số tự nhiên có ba chữ số ban đầu là $\\overline{abc}$. Khi thêm chữ số $5$ vào đằng trước, ta được số mới là $\\overline{5abc} = 5000 + \\overline{abc}$. Như vậy số mới lớn hơn số cũ $5000$ đơn vị."
+            },
+            {
+                id: 6,
+                topic: "Cấu tạo số",
+                question: "Thêm chữ số $0$ vào bên phải một số tự nhiên khác $0$ thì số đó thay đổi thế nào?",
+                options: ["Tăng thêm $10$ đơn vị", "Tăng lên $10$ lần", "Giảm đi $10$ lần", "Không thay đổi"],
+                correct: 1,
+                explanation: "Gọi số tự nhiên ban đầu là $a$. Khi viết thêm chữ số $0$ vào bên phải ta được số mới $\\overline{a0} = a \\times 10$. Vậy số đó tăng lên $10$ lần."
+            },
+            {
+                id: 7,
+                topic: "Lập số",
+                question: "Với ba chữ số $0; 2; 5$, viết được bao nhiêu số tự nhiên có ba chữ số **khác nhau**?",
+                options: ["$6$ số", "$5$ số", "$4$ số", "$3$ số"],
+                correct: 2,
+                explanation: "Chữ số hàng trăm có $2$ cách chọn (là $2$ hoặc $5$, vì $0$ không thể đứng đầu).\n- Nếu hàng trăm là $2$: lập được $205, 250$.\n- Nếu hàng trăm là $5$: lập được $502, 520$.\nVậy lập được tất cả $4$ số."
+            },
+            {
+                id: 8,
+                topic: "Lập số",
+                question: "Từ các chữ số $1; 4; 7$, số tự nhiên lớn nhất có ba chữ số khác nhau lập được là:",
+                options: ["$714$", "$741$", "$471$", "$147$"],
+                correct: 1,
+                explanation: "Để được số lớn nhất, ta xếp các chữ số theo thứ tự giảm dần từ hàng cao nhất đến hàng thấp nhất: $7 > 4 > 1$. Số lớn nhất là $741$."
+            },
+            {
+                id: 9,
+                topic: "Lũy thừa",
+                question: "Viết tích $5 \\cdot 5 \\cdot 5 \\cdot 5$ dưới dạng một lũy thừa:",
+                options: ["$5^3$", "$4^5$", "$5^4$", "$20$"],
+                correct: 2,
+                explanation: "Tích gồm $4$ thừa số $5$ nhân với nhau được viết gọn dưới dạng lũy thừa là $5^4$."
+            },
+            {
+                id: 10,
+                topic: "Phép tính Lũy thừa",
+                question: "Giá trị của biểu thức $2^4 + 3^2$ bằng bao nhiêu?",
+                options: ["$14$", "$22$", "$25$", "$18$"],
+                correct: 2,
+                explanation: "Ta tính từng giá trị lũy thừa:\n- $2^4 = 2 \\cdot 2 \\cdot 2 \\cdot 2 = 16$\n- $3^2 = 3 \\cdot 3 = 9$\n$\\Rightarrow 2^4 + 3^2 = 16 + 9 = 25$."
+            },
+            {
+                id: 11,
+                topic: "Phép tính Lũy thừa",
+                question: "Số tự nhiên $x$ thỏa mãn $3^x = 3^2 \\cdot 3^3$ là:",
+                options: ["$x = 5$", "$x = 6$", "$x = 8$", "$x = 9$"],
+                correct: 0,
+                explanation: "Áp dụng quy tắc nhân hai lũy thừa cùng cơ số: $3^2 \\cdot 3^3 = 3^{2+3} = 3^5$.\nDo đó $3^x = 3^5 \\Rightarrow x = 5$."
+            },
+            {
+                id: 12,
+                topic: "Phép tính Lũy thừa",
+                question: "Kết quả của phép chia $7^8 : 7^2$ viết dưới dạng lũy thừa là:",
+                options: ["$7^4$", "$7^{10}$", "$7^6$", "$1^6$"],
+                correct: 2,
+                explanation: "Áp dụng quy tắc chia hai lũy thừa cùng cơ số: $7^8 : 7^2 = 7^{8-2} = 7^6$."
+            },
+            {
+                id: 13,
+                topic: "Phép tính Lũy thừa",
+                question: "Tìm số tự nhiên $x$ thỏa mãn $2^x = 16$:",
+                options: ["$x = 2$", "$x = 3$", "$x = 4$", "$x = 8$"],
+                correct: 2,
+                explanation: "Ta phân tích $16 = 2 \\cdot 2 \\cdot 2 \\cdot 2 = 2^4$.\nDo $2^x = 2^4 \\Rightarrow x = 4$."
+            },
+            {
+                id: 14,
+                topic: "Tính chia hết",
+                question: "Cho tổng $A = 15 + 25 + 30 + x$ ($x \\in \\mathbb{N}$). Điều kiện của $x$ để $A \\,\\vdots\\, 5$ là:",
+                options: ["$x \\,\\vdots\\, 5$", "$x \\,\\not\\vdots\\, 5$", "$x \\,\\vdots\\, 2$", "$x$ là số lẻ"],
+                correct: 0,
+                explanation: "Vì các số $15, 25, 30$ đều chia hết cho $5$, nên để tổng $A = (15 + 25 + 30 + x) \\,\\vdots\\, 5$ thì theo tính chất chia hết của một tổng, số hạng còn lại $x$ cũng phải chia hết cho $5$ ($x \\,\\vdots\\, 5$)."
+            },
+            {
+                id: 15,
+                topic: "Tính chia hết",
+                question: "Cho hiệu $B = 48 - x$ ($x \\in \\mathbb{N}$). Để $B \\,\\vdots\\, 8$ thì $x$ phải thỏa mãn:",
+                options: ["$x \\,\\vdots\\, 6$", "$x \\,\\vdots\\, 8$", "$x \\,\\not\\vdots\\, 8$", "$x$ là số lẻ"],
+                correct: 1,
+                explanation: "Vì $48 = 8 \\cdot 6 \\,\\vdots\\, 8$, nên để $B = 48 - x$ chia hết cho $8$ thì $x$ phải chia hết cho $8$ ($x \\,\\vdots\\, 8$)."
+            },
+            {
+                id: 16,
+                topic: "Dấu hiệu chia hết",
+                question: "Số nào sau đây chia hết cho cả $2; 3$ và $5$?",
+                options: ["$125$", "$150$", "$182$", "$205$"],
+                correct: 1,
+                explanation: "- Chia hết cho cả $2$ và $5 \\Rightarrow$ Chữ số tận cùng phải là $0$. Trong các số trên có $150$.\n- Kiểm tra tính chia hết cho $3$: Tổng các chữ số của $150$ là $1 + 5 + 0 = 6 \\,\\vdots\\, 3$.\nVậy $150$ chia hết cho cả $2; 3; 5$."
+            },
+            {
+                id: 17,
+                topic: "Dấu hiệu chia hết",
+                question: "Tìm chữ số $x$ để số $\\overline{23x}$ chia hết cho $9$:",
+                options: ["$x = 2$", "$x = 4$", "$x = 5$", "$x = 9$"],
+                correct: 1,
+                explanation: "Để $\\overline{23x} \\,\\vdots\\, 9$ thì tổng các chữ số $(2 + 3 + x) = 5 + x$ phải chia hết cho $9$.\nVì $x$ là chữ số ($0 \\le x \\le 9$) nên $5 + x = 9 \\Rightarrow x = 4$."
+            },
+            {
+                id: 18,
+                topic: "Số nguyên tố",
+                question: "Khẳng định nào sau đây là **đúng**?",
+                options: ["$0$ và $1$ là các số nguyên tố", "$2$ là số nguyên tố chẵn duy nhất", "Mọi số nguyên tố đều là số lẻ", "Các số $9; 15; 21$ là số nguyên tố"],
+                correct: 1,
+                explanation: "- $0$ và $1$ không là số nguyên tố.\n- $2$ là số nguyên tố nhỏ nhất và cũng là số nguyên tố chẵn duy nhất.\n- $9, 15, 21$ đều có nhiều hơn $2$ ước nên là hợp số."
+            },
+            {
+                id: 19,
+                topic: "Số nguyên tố",
+                question: "Tập hợp nào sau đây chỉ gồm các **số nguyên tố**?",
+                options: ["$\\{2; 3; 5; 7\\}$", "$\\{1; 2; 3; 5\\}$", "$\\{3; 5; 7; 9\\}$", "$\\{2; 4; 6; 8\\}$"],
+                correct: 0,
+                explanation: "- Tập $\\{1; 2; 3; 5\\}$ chứa $1$ không phải số nguyên tố.\n- Tập $\\{3; 5; 7; 9\\}$ chứa $9$ là hợp số.\n- Tập $\\{2; 4; 6; 8\\}$ chứa $4, 6, 8$ là hợp số.\n- Tập $\\{2; 3; 5; 7\\}$ gồm toàn các số nguyên tố."
+            },
+            {
+                id: 20,
+                topic: "Phân tích số",
+                question: "Phân tích số $24$ ra thừa số nguyên tố, kết quả đúng là:",
+                options: ["$2 \\cdot 12$", "$3 \\cdot 8$", "$2^3 \\cdot 3$", "$2 \\cdot 3^2$"],
+                correct: 2,
+                explanation: "Ta có: $24 = 8 \\cdot 3 = 2^3 \\cdot 3$. Các thừa số $2$ và $3$ đều là số nguyên tố."
+            },
+            {
+                id: 21,
+                topic: "Số nguyên tố",
+                question: "Khẳng định nào sau đây là **sai**?",
+                options: [
+                    "Số $2$ là số nguyên tố nhỏ nhất", 
+                    "Hợp số là số tự nhiên lớn hơn $1$, có nhiều hơn $2$ ước", 
+                    "Số $0$ và $1$ không là số nguyên tố, cũng không là hợp số", 
+                    "Tổng của hai số nguyên tố luôn là một hợp số"
+                ],
+                correct: 3,
+                explanation: "Khẳng định 'Tổng hai số nguyên tố luôn là một hợp số' là **sai**. Ví dụ: $2 + 3 = 5$ (vẫn là một số nguyên tố)."
+            },
+            {
+                id: 22,
+                topic: "Hình chữ nhật",
+                question: "Một hình chữ nhật có chiều dài $10\\text{ cm}$ và chiều rộng $6\\text{ cm}$. Chu vi hình chữ nhật đó là:",
+                options: ["$16\\text{ cm}$", "$32\\text{ cm}$", "$60\\text{ cm}^2$", "$32\\text{ cm}^2$"],
+                correct: 1,
+                explanation: "Chu vi hình chữ nhật = $(\\text{Chiều dài} + \\text{Chiều rộng}) \\times 2 = (10 + 6) \\times 2 = 32\\text{ cm}$."
+            },
+            {
+                id: 23,
+                topic: "Hình chữ nhật",
+                question: "Hình chữ nhật có chu vi $24\\text{ cm}$, chiều dài gấp đôi chiều rộng. Diện tích của hình chữ nhật đó bằng:",
+                options: ["$32\\text{ cm}^2$", "$128\\text{ cm}^2$", "$16\\text{ cm}^2$", "$64\\text{ cm}^2$"],
+                correct: 0,
+                explanation: "- Nửa chu vi = $24 : 2 = 12\\text{ cm}$.\n- Chiều rộng $= 12 : (1 + 2) = 4\\text{ cm}$.\n- Chiều dài $= 4 \\times 2 = 8\\text{ cm}$.\n- Diện tích $S = 8 \\times 4 = 32\\text{ cm}^2$."
+            },
+            {
+                id: 24,
+                topic: "Hình thoi",
+                question: "Một hình thoi có độ dài cạnh là $6\\text{ cm}$. Chu vi của hình thoi đó bằng:",
+                options: ["$12\\text{ cm}$", "$24\\text{ cm}$", "$36\\text{ cm}^2$", "$24\\text{ cm}^2$"],
+                correct: 1,
+                explanation: "Hình thoi có $4$ cạnh bằng nhau.\nChu vi hình thoi = $\\text{Độ dài cạnh} \\times 4 = 6 \\times 4 = 24\\text{ cm}$."
+            },
+            {
+                id: 25,
+                topic: "Hình thoi",
+                question: "Độ dài hai đường chéo của hình thoi lần lượt là $8\\text{ cm}$ và $10\\text{ cm}$. Diện tích hình thoi là:",
+                options: ["$80\\text{ cm}^2$", "$40\\text{ cm}^2$", "$36\\text{ cm}^2$", "$18\\text{ cm}^2$"],
+                correct: 1,
+                explanation: "Diện tích hình thoi bằng nửa tích hai đường chéo:\n$S = \\dfrac{1}{2} \\cdot m \\cdot n = \\dfrac{8 \\cdot 10}{2} = 40\\text{ cm}^2$."
+            },
+            {
+                id: 26,
+                topic: "Hình vuông",
+                question: "Uốn một đoạn dây thép vừa đủ thành một hình vuông có cạnh $3\\text{ dm}$. Độ dài đoạn dây thép đó là:",
+                options: ["$1,2\\text{ m}$", "$12\\text{ dm}$", "$9\\text{ dm}$", "$12\\text{ m}$"],
+                correct: 1,
+                explanation: "Độ dài đoạn dây thép bằng chu vi hình vuông có cạnh $3\\text{ dm}$.\nChu vi = $3 \\times 4 = 12\\text{ dm}$."
+            },
+            {
+                id: 27,
+                topic: "Hình vuông",
+                question: "Một mảnh vườn hình vuông có chu vi bằng $20\\text{ m}$. Diện tích mảnh vườn đó là:",
+                options: ["$25\\text{ m}^2$", "$20\\text{ m}^2$", "$100\\text{ m}^2$", "$16\\text{ m}^2$"],
+                correct: 0,
+                explanation: "- Độ dài cạnh hình vuông = $\\text{Chu vi} : 4 = 20 : 4 = 5\\text{ m}$.\n- Diện tích hình vuông = $a \\times a = 5 \\times 5 = 25\\text{ m}^2$."
+            },
+            {
+                id: 28,
+                topic: "Đổi đơn vị",
+                question: "Đổi đơn vị đo: $120\\text{ cm}$ bằng bao nhiêu $\\text{dm}$?",
+                options: ["$1,2\\text{ dm}$", "$12\\text{ dm}$", "$1200\\text{ dm}$", "$0,12\\text{ dm}$"],
+                correct: 1,
+                explanation: "Vì $1\\text{ dm} = 10\\text{ cm}$ nên $120\\text{ cm} = 120 : 10 = 12\\text{ dm}$."
+            },
+            {
+                id: 29,
+                topic: "Hình học phẳng",
+                question: "Trong các hình sau, hình nào có $4$ cạnh bằng nhau và $4$ góc vuông?",
+                options: ["Hình chữ nhật", "Hình thoi", "Hình vuông", "Hình bình hành"],
+                correct: 2,
+                explanation: "- Hình chữ nhật có $4$ góc vuông nhưng các cạnh đối mới bằng nhau.\n- Hình thoi có $4$ cạnh bằng nhau nhưng các góc không nhất thiết là góc vuông.\n- **Hình vuông** vừa có $4$ cạnh bằng nhau vừa có $4$ góc vuông."
+            },
+            {
+                id: 30,
+                topic: "Tính chất Hình thoi",
+                question: "Cho hình thoi $ABCD$. Phát biểu nào sau đây là **đúng**?",
+                options: [
+                    "Hai đường chéo vuông góc với nhau", 
+                    "Bốn góc bằng nhau và bằng $90^\\circ$", 
+                    "Hai đường chéo bằng nhau", 
+                    "Chỉ có các cạnh đối diện mới bằng nhau"
+                ],
+                correct: 0,
+                explanation: "Tính chất cơ bản của hình thoi: Hai đường chéo vuông góc với nhau tại trung điểm của mỗi đường."
+            }
+        ];
+
+        // ==========================================
+        // 2. STATE VARIABLES
+        // ==========================================
+        let currentIndex = 0;
+        let userAnswers = new Array(questionsData.length).fill(null);
+        let startTime = Date.now();
+        let timerInterval = null;
+        let audioCtx = null;
+        let bgOscillator = null;
+        let isMusicPlaying = false;
+
+        // ==========================================
+        // 3. AUDIO ENGINE (Web Audio API Synthesizer)
+        // ==========================================
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        // Sound FX for Correct Answer (Ting sound)
+        function playCorrectSound() {
+            initAudio();
+            const now = audioCtx.currentTime;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(523.25, now); // C5
+            osc.frequency.exponentialRampToValueAtTime(880, now + 0.15); // A5
+
+            gain.gain.setValueAtTime(0.3, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            osc.start(now);
+            osc.stop(now + 0.3);
+        }
+
+        // Sound FX for Wrong Answer (Soft Dung sound)
+        function playWrongSound() {
+            initAudio();
+            const now = audioCtx.currentTime;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(220, now); // A3
+            osc.frequency.exponentialRampToValueAtTime(146.83, now + 0.2); // D3
+
+            gain.gain.setValueAtTime(0.3, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            osc.start(now);
+            osc.stop(now + 0.25);
+        }
+
+        // Ambient Chill Background Music Loop
+        let musicGainNode = null;
+        let musicTimer = null;
+
+        function startBgMusic() {
+            initAudio();
+            if (isMusicPlaying) return;
+
+            isMusicPlaying = true;
+            document.getElementById('bgMusicIcon').className = "fa-solid fa-volume-high";
+            document.getElementById('bgMusicText').innerText = "Nhạc Nền: Bật";
+
+            const notes = [261.63, 329.63, 392.00, 523.25, 440.00, 349.23]; // C E G C A F pentatonic feel
+            let step = 0;
+
+            musicGainNode = audioCtx.createGain();
+            musicGainNode.gain.value = 0.05; // Very soft volume
+            musicGainNode.connect(audioCtx.destination);
+
+            function playNote() {
+                if (!isMusicPlaying) return;
+                const osc = audioCtx.createOscillator();
+                const noteGain = audioCtx.createGain();
+                
+                osc.type = 'sine';
+                osc.frequency.value = notes[step % notes.length];
+                
+                const now = audioCtx.currentTime;
+                noteGain.gain.setValueAtTime(0.03, now);
+                noteGain.gain.exponentialRampToValueAtTime(0.001, now + 1.2);
+
+                osc.connect(noteGain);
+                noteGain.connect(musicGainNode);
+
+                osc.start(now);
+                osc.stop(now + 1.2);
+
+                step++;
+                musicTimer = setTimeout(playNote, 1500);
+            }
+
+            playNote();
+        }
+
+        function stopBgMusic() {
+            isMusicPlaying = false;
+            if (musicTimer) clearTimeout(musicTimer);
+            document.getElementById('bgMusicIcon').className = "fa-solid fa-music";
+            document.getElementById('bgMusicText').innerText = "Nhạc Nền: Tắt";
+        }
+
+        document.getElementById('bgMusicToggle').addEventListener('click', () => {
+            if (isMusicPlaying) {
+                stopBgMusic();
+            } else {
+                startBgMusic();
+            }
+        });
+
+        // ==========================================
+        // 4. TIMER & PROGRESS CONTROL
+        // ==========================================
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                const elapsedSec = Math.floor((Date.now() - startTime) / 1000);
+                const mins = String(Math.floor(elapsedSec / 60)).padStart(2, '0');
+                const secs = String(elapsedSec % 60).padStart(2, '0');
+                document.getElementById('timeText').innerText = `${mins}:${secs}`;
+            }, 1000);
+        }
+
+        function updateProgress() {
+            const answered = userAnswers.filter(a => a !== null).length;
+            const correct = userAnswers.filter((a, idx) => a === questionsData[idx].correct).length;
+            
+            document.getElementById('answeredCount').innerText = answered;
+            document.getElementById('correctCount').innerText = correct;
+            document.getElementById('currentQuestionNum').innerText = currentIndex + 1;
+
+            const percent = ((currentIndex + 1) / questionsData.length) * 100;
+            document.getElementById('progressBar').style.width = `${percent}%`;
+
+            // Update status badge for current question
+            const statusBadge = document.getElementById('statusBadge');
+            if (userAnswers[currentIndex] === null) {
+                statusBadge.className = "text-xs px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 font-semibold";
+                statusBadge.innerText = "Chưa làm";
+            } else if (userAnswers[currentIndex] === questionsData[currentIndex].correct) {
+                statusBadge.className = "text-xs px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-700 font-semibold";
+                statusBadge.innerText = "Đã đúng";
+            } else {
+                statusBadge.className = "text-xs px-2.5 py-1 rounded-full bg-rose-100 text-rose-700 font-semibold";
+                statusBadge.innerText = "Đã sai";
+            }
+
+            // Update grid buttons styling
+            updateGridUI();
+        }
+
+        // ==========================================
+        // 5. RENDER QUESTION & OPTIONS
+        // ==========================================
+        function renderQuestion() {
+            const q = questionsData[currentIndex];
+
+            document.getElementById('topicTag').innerText = q.topic.toUpperCase();
+            document.getElementById('qNumHeader').innerText = `${q.id}/30`;
+            document.getElementById('questionText').innerHTML = q.question;
+
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = '';
+
+            const isAnswered = userAnswers[currentIndex] !== null;
+            const selectedOpt = userAnswers[currentIndex];
+
+            q.options.forEach((optText, optIdx) => {
+                const btn = document.createElement('button');
+                btn.className = `option-btn w-full text-left p-4 rounded-2xl border-2 font-semibold text-sm md:text-base flex items-start gap-3 transition-all duration-200 `;
+
+                // Option prefix (A, B, C, D)
+                const prefix = String.fromCharCode(65 + optIdx);
+
+                if (!isAnswered) {
+                    btn.className += "bg-white border-gray-200 text-gray-700 hover:border-emerald-300 hover:bg-emerald-50/50";
+                } else {
+                    btn.disabled = true; // Lock choices
+                    if (optIdx === q.correct) {
+                        // Correct option styling
+                        btn.className += "bg-emerald-100/80 border-emerald-500 text-emerald-900 font-bold ring-2 ring-emerald-400";
+                    } else if (optIdx === selectedOpt) {
+                        // Wrong option selected
+                        btn.className += "bg-rose-100/80 border-rose-400 text-rose-900 font-bold ring-2 ring-rose-300";
+                    } else {
+                        // Unselected neutral options
+                        btn.className += "bg-gray-50 border-gray-200 text-gray-400 opacity-60";
+                    }
+                }
+
+                btn.innerHTML = `
+                    <span class="w-7 h-7 rounded-lg bg-gray-100 border border-gray-300 flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">${prefix}</span>
+                    <span class="flex-1">${optText}</span>
+                `;
+
+                btn.addEventListener('click', () => handleSelectOption(optIdx));
+                optionsContainer.appendChild(btn);
+            });
+
+            // Handle Explanation box
+            const explanationBox = document.getElementById('explanationContainer');
+            if (isAnswered) {
+                explanationBox.classList.remove('hidden');
+                document.getElementById('explanationText').innerHTML = q.explanation.replace(/\n/g, '<br>');
+            } else {
+                explanationBox.classList.add('hidden');
+            }
+
+            // Buttons state
+            document.getElementById('prevBtn').disabled = currentIndex === 0;
+            
+            if (currentIndex === questionsData.length - 1) {
+                document.getElementById('nextBtn').classList.add('hidden');
+                document.getElementById('submitAllBtn').classList.remove('hidden');
+            } else {
+                document.getElementById('nextBtn').classList.remove('hidden');
+                document.getElementById('submitAllBtn').classList.add('hidden');
+            }
+
+            updateProgress();
+
+            // Render Math equations via KaTeX
+            if (window.renderMathInElement) {
+                renderMathInElement(document.getElementById('quizContainer'), {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$', right: '$', display: false}
+                    ],
+                    throwOnError: false
+                });
+            }
+        }
+
+        // ==========================================
+        // 6. EVENT HANDLERS
+        // ==========================================
+        function handleSelectOption(optIdx) {
+            if (userAnswers[currentIndex] !== null) return; // Prevent re-select
+
+            userAnswers[currentIndex] = optIdx;
+            const isCorrect = optIdx === questionsData[currentIndex].correct;
+
+            if (isCorrect) {
+                playCorrectSound();
+            } else {
+                playWrongSound();
+            }
+
+            renderQuestion();
+        }
+
+        // Navigation
+        document.getElementById('prevBtn').addEventListener('click', () => {
+            if (currentIndex > 0) {
+                currentIndex--;
+                renderQuestion();
+            }
+        });
+
+        document.getElementById('nextBtn').addEventListener('click', () => {
+            if (currentIndex < questionsData.length - 1) {
+                currentIndex++;
+                renderQuestion();
+            }
+        });
+
+        document.getElementById('submitAllBtn').addEventListener('click', showSummary);
+
+        // Populate Question Jump Grid
+        function initGridUI() {
+            const grid = document.getElementById('questionGrid');
+            grid.innerHTML = '';
+            questionsData.forEach((_, idx) => {
+                const btn = document.createElement('button');
+                btn.className = `h-8 text-xs font-bold rounded-lg border flex items-center justify-center transition `;
+                btn.innerText = idx + 1;
+                btn.addEventListener('click', () => {
+                    currentIndex = idx;
+                    renderQuestion();
+                });
+                grid.appendChild(btn);
+            });
+        }
+
+        function updateGridUI() {
+            const buttons = document.getElementById('questionGrid').children;
+            questionsData.forEach((_, idx) => {
+                if (!buttons[idx]) return;
+                const state = userAnswers[idx];
+                if (idx === currentIndex) {
+                    buttons[idx].className = "h-8 text-xs font-bold rounded-lg border-2 border-indigo-600 bg-indigo-50 text-indigo-700 ring-2 ring-indigo-200";
+                } else if (state === null) {
+                    buttons[idx].className = "h-8 text-xs font-bold rounded-lg border border-gray-200 bg-white text-gray-600 hover:bg-gray-100";
+                } else if (state === questionsData[idx].correct) {
+                    buttons[idx].className = "h-8 text-xs font-bold rounded-lg border border-emerald-400 bg-emerald-100 text-emerald-800";
+                } else {
+                    buttons[idx].className = "h-8 text-xs font-bold rounded-lg border border-rose-300 bg-rose-100 text-rose-800";
+                }
+            });
+        }
+
+        document.getElementById('toggleGridBtn').addEventListener('click', () => {
+            const grid = document.getElementById('questionGrid');
+            grid.classList.toggle('hidden');
+        });
+
+        // ==========================================
+        // 7. SUMMARY & RESULT VIEW
+        // ==========================================
+        function showSummary() {
+            clearInterval(timerInterval);
+
+            document.getElementById('quizContainer').classList.add('hidden');
+            document.getElementById('summaryContainer').classList.remove('hidden');
+
+            const correctCount = userAnswers.filter((a, idx) => a === questionsData[idx].correct).length;
+            const accuracy = Math.round((correctCount / questionsData.length) * 100);
+            const score = (correctCount / 30 * 10).toFixed(1);
+
+            document.getElementById('finalScore').innerText = `${score} / 10`;
+            document.getElementById('finalCorrect').innerText = `${correctCount} / 30`;
+            document.getElementById('finalAccuracy').innerText = `${accuracy}%`;
+            document.getElementById('finalTime').innerText = document.getElementById('timeText').innerText;
+
+            // Badge determination
+            const badgeIcon = document.getElementById('badgeIcon');
+            const badgeTitle = document.getElementById('badgeTitle');
+            const badgeSub = document.getElementById('badgeSub');
+
+            if (score >= 9) {
+                badgeIcon.className = "w-24 h-24 mx-auto mb-4 rounded-full bg-amber-100 text-amber-500 flex items-center justify-center text-5xl shadow-lg border-4 border-amber-300";
+                badgeIcon.innerHTML = `<i class="fa-solid fa-crown"></i>`;
+                badgeTitle.innerText = "Xuất Sắc - Thần Đồng Toán Học!";
+                badgeSub.innerText = "Chúc mừng bạn đã nắm vững toàn bộ kiến thức Toán lớp 6!";
+            } else if (score >= 7) {
+                badgeIcon.className = "w-24 h-24 mx-auto mb-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-5xl shadow-lg border-4 border-emerald-300";
+                badgeIcon.innerHTML = `<i class="fa-solid fa-award"></i>`;
+                badgeTitle.innerText = "Học Sinh Giỏi!";
+                badgeSub.innerText = "Bạn làm bài rất tốt, hãy duy trì phong độ nhé!";
+            } else if (score >= 5) {
+                badgeIcon.className = "w-24 h-24 mx-auto mb-4 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-5xl shadow-lg border-4 border-blue-300";
+                badgeIcon.innerHTML = `<i class="fa-solid fa-thumbs-up"></i>`;
+                badgeTitle.innerText = "Khá Tốt!";
+                badgeSub.innerText = "Bạn đã có nền tảng cơ bản, hãy xem lại các câu chưa đúng!";
+            } else {
+                badgeIcon.className = "w-24 h-24 mx-auto mb-4 rounded-full bg-rose-100 text-rose-500 flex items-center justify-center text-5xl shadow-lg border-4 border-rose-300";
+                badgeIcon.innerHTML = `<i class="fa-solid fa-book-open"></i>`;
+                badgeTitle.innerText = "Cần Cố Gắng Hơn!";
+                badgeSub.innerText = "Đừng nản lòng, hãy xem lại lời giải chi tiết và làm lại nhé!";
+            }
+        }
+
+        document.getElementById('restartBtn').addEventListener('click', () => {
+            userAnswers = new Array(questionsData.length).fill(null);
+            currentIndex = 0;
+            startTime = Date.now();
+            
+            document.getElementById('summaryContainer').classList.add('hidden');
+            document.getElementById('quizContainer').classList.remove('hidden');
+            
+            startTimer();
+            renderQuestion();
+        });
+
+        document.getElementById('reviewWrongBtn').addEventListener('click', () => {
+            document.getElementById('summaryContainer').classList.add('hidden');
+            document.getElementById('quizContainer').classList.remove('hidden');
+
+            // Find first wrong or unanswered question
+            const wrongIdx = userAnswers.findIndex((a, idx) => a !== questionsData[idx].correct);
+            if (wrongIdx !== -1) {
+                currentIndex = wrongIdx;
+            } else {
+                currentIndex = 0;
+            }
+            renderQuestion();
+        });
+
+        // ==========================================
+        // 8. INITIALIZATION ON LOAD
+        // ==========================================
+        window.onload = function () {
+            initGridUI();
+            renderQuestion();
+            startTimer();
+
+            // Try starting background music on first user interaction
+            document.body.addEventListener('click', function firstClick() {
+                initAudio();
+                document.body.removeEventListener('click', firstClick);
+            }, { once: true });
+        };
+    </script>
+</body>
+</html>
